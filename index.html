@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movie Page</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+   <div class="hero">
+    <h1>Movie Explorer</h1>
+    <p>Search movies, discover ratings, and watch trailers.</p>
+  <div class="search-box">
+    <input id="movieInput" type="text" placeholder="Search Movie">
+    <button id="searchBtn">Search</button>
+  </div>
+
+  <p id="errorMessage"></p>
+  <p id ="movieCount"></p>
+  <div id="results"></div>
+
+  <div class="movie-card">
+    <img id="moviePoster" alt="Movie poster">
+
+    <div class="movie-info">
+      <button id="backBtn"><- Previous Results</button>
+      <h1 id="movieTitle"></h1>
+
+      <p id="movieYear"></p>
+      <p id="movieGenre"></p>
+      <p id="movieRating"></p>
+      <p id="movieDirector"></p>
+      <p id="movieActors"></p>
+      <p id="movieRuntime"></p>
+
+      <p id="moviePlot"></p>
+
+      <button id="trailerBtn">Watch Trailer</button>
+      <button id="favoriteBtn">⭐️ Add to Favorites</button>
+      <h3>Favorites</h3>
+      <div id = "favoritesList"></div>
+      <div id="trailerContainer"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
