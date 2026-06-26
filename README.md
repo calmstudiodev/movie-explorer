@@ -20,3 +20,7 @@ A modern Movie EXplorer built with HTML,CSS and JavaScript using the OMDB API.
 -CSS3
 -JavaScript (ES6)
 -OMDb API
+
+##Live Demo
+Click here to try:
+https://calmstudiodev.github.io/movie-explorer
