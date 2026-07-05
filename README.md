@@ -23,4 +23,4 @@ A modern Movie EXplorer built with HTML,CSS and JavaScript using the OMDB API.
 
 ##Live Demo
 Click here to try:
-https://calmstudiodev.github.io/movie-explorer
+https://calmstudiodev.github.io/movie-explorer/?v=2
