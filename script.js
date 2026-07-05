@@ -23,212 +23,174 @@ const errorMessage = document.getElementById("errorMessage");
 const movieCount = document.getElementById("movieCount");
 
 let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+const apiKey = "8a64af2f";
 
-searchBtn.addEventListener("click", function () {
-
-    const movieName = movieInput.value.trim();
-    results.innerHTML = "Searching";
-    movieCard.style.display = "none";
-
-    errorMessage.textContent = "";
-   
-    movieTitle.textContent = "";
-    movieYear.textContent = "";
-    movieGenre.textContent = "";
-    movieRating.textContent = "";
-    movieDirector.textContent = "";
-    movieActors.textContent = "";
-    movieRuntime.textContent = "";
-    moviePlot.textContent = "";
-    moviePoster.src = "";
-
-    document.body.style.backgroundImage = "";
-
-    if (movieName === "") {
-        alert("Please enter a movie name");
-        return;
-    }
-
-    const searchUrl =
-        `https://www.omdbapi.com/?s=${movieName}&apikey=8a64af2f`;
-
-    fetch(searchUrl)
-        .then(response => response.json())
-        .then(searchData => {
-
-            results.innerHTML = "";
-
-            if (searchData.Response === "False") {
-                errorMessage.textContent = "Movie not found";
-                movieCount.textContent = "";
-                return;
-            }
-
-            errorMessage.textContent = "";
-            movieCount.textContent = `Found ${searchData.Search.length} movies`;
-
-            searchData.Search.forEach(function (movie) {
-
-                const movieItem = document.createElement("div");
-
-                movieItem.textContent =
-                    `${movie.Title} - ${movie.Year}`;
-
-                movieItem.style.cursor = "pointer";
-                movieItem.style.margin = "10px";
-                movieItem.style.fontWeight = "bold";
-                movieItem.style.color = "white";
-
-                movieItem.addEventListener("click", function () {
-
-                    const detailUrl =
-                        `https://www.omdbapi.com/?i=${movie.imdbID}&apikey=8a64af2f`;
-
-                    fetch(detailUrl)
-                        .then(response => response.json())
-                        .then(data => {
-
-                            movieCard.style.display = "flex";
-                            
-                            movieTitle.textContent = data.Title;
-                            movieYear.textContent = "Year: " + data.Year;
-                            movieGenre.textContent = "Genre: " + data.Genre;
-                            movieRating.textContent = "Rating: " + data.imdbRating;
-                            movieDirector.textContent = "Director: " + data.Director;
-                            movieActors.textContent = "Actors: " + data.Actors;
-                            movieRuntime.textContent = "Runtime: " + data.Runtime;
-                            moviePlot.textContent = data.Plot;
-
-                            if (data.Poster === "N/A") {
-                                moviePoster.style.display = "none";
-                                moviePoster.alt = "";
-                                moviePoster.removeAttribute("src");
-                                document.body.style.backgroundImage = "none";
-                            } else {
-                                moviePoster.style.display = "block";
-                                moviePoster.alt = "Movie poster";
-                                
-                                moviePoster.src =data.Poster;
-                                moviePoster.onerror = function () {
-                                    moviePoster.style.display = "none";
-                                    moviePoster.removeAttribute("src");
-                                };
-                                document.body.style.backgroundImage = `url(${data.Poster})`;
-                                document.body.style.backgroundSize = "cover";
-                                document.body.style.backgroundPosition = "center";
-                                document.body.style.backgroundRepeat = "no-repeat";
-
-
-                                
-                            }
-
-                            results.style.display = "none";
-                            movieInput.value = "";
-
-
-                            
-
-                        });
-                });
-
-                results.appendChild(movieItem);
-
-            });
-
-
-        })
-        .catch(error => {
-            console.log(error);
-        });
-
-});
+searchBtn.addEventListener("click", searchMovies);
 
 movieInput.addEventListener("keydown", function (event) {
-
-    if (event.key === "Enter") {
-        searchBtn.click();
-    }
-
+  if (event.key === "Enter") {
+    searchMovies();
+  }
 });
 
+function searchMovies() {
+  const movieName = movieInput.value.trim();
+
+  errorMessage.textContent = "";
+  results.innerHTML = "";
+  movieCount.textContent = "";
+  movieCard.style.display = "none";
+  trailerContainer.style.display = "none";
+  trailerContainer.innerHTML = "";
+
+  results.style.display = "block";
+  movieCount.style.display = "block";
+
+  document.body.style.backgroundImage = "";
+
+  if (movieName === "") {
+    errorMessage.textContent = "Please enter a movie name";
+    return;
+  }
+
+  results.innerHTML = "Searching...";
+
+  const searchUrl = `https://www.omdbapi.com/?s=${encodeURIComponent(movieName)}&apikey=${apiKey}`;
+
+  fetch(searchUrl)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (searchData) {
+      results.innerHTML = "";
+
+      if (searchData.Response === "False") {
+        errorMessage.textContent = "Movie not found";
+        movieCount.textContent = "";
+        return;
+      }
+
+      movieCount.textContent = `Found ${searchData.Search.length} movies`;
+
+      searchData.Search.forEach(function (movie) {
+        const movieItem = document.createElement("div");
+
+        movieItem.textContent = `${movie.Title} - ${movie.Year}`;
+        movieItem.style.cursor = "pointer";
+        movieItem.style.margin = "10px";
+        movieItem.style.fontWeight = "bold";
+        movieItem.style.color = "white";
+
+        movieItem.addEventListener("click", function () {
+          showMovieDetails(movie.imdbID);
+        });
+
+        results.appendChild(movieItem);
+      });
+    })
+    .catch(function (error) {
+      console.log(error);
+      results.innerHTML = "";
+      errorMessage.textContent = "Something went wrong";
+    });
+}
+
+function showMovieDetails(imdbID) {
+  const detailUrl = `https://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}`;
+
+  fetch(detailUrl)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      movieCard.style.display = "flex";
+
+      movieTitle.textContent = data.Title || "N/A";
+      movieYear.textContent = "Year: " + (data.Year || "N/A");
+      movieGenre.textContent = "Genre: " + (data.Genre || "N/A");
+      movieRating.textContent = "Rating: " + (data.imdbRating || "N/A");
+      movieDirector.textContent = "Director: " + (data.Director || "N/A");
+      movieActors.textContent = "Actors: " + (data.Actors || "N/A");
+      movieRuntime.textContent = "Runtime: " + (data.Runtime || "N/A");
+      moviePlot.textContent = data.Plot || "No plot available.";
+
+      results.style.display = "none";
+      movieCount.style.display = "none";
+      movieInput.value = "";
+      trailerContainer.style.display = "none";
+      trailerContainer.innerHTML = "";
+
+      if (data.Poster === "N/A") {
+        moviePoster.style.display = "none";
+        moviePoster.removeAttribute("src");
+        document.body.style.backgroundImage = "";
+      } else {
+        moviePoster.style.display = "block";
+        moviePoster.src = data.Poster;
+        moviePoster.alt = "Movie poster";
+
+        document.body.style.backgroundImage = `url(${data.Poster})`;
+        document.body.style.backgroundSize = "cover";
+        document.body.style.backgroundPosition = "center";
+        document.body.style.backgroundRepeat = "no-repeat";
+      }
+
+      window.scrollTo(0, 0);
+    })
+    .catch(function (error) {
+      console.log(error);
+      errorMessage.textContent = "Movie details could not be loaded";
+    });
+}
+
 backBtn.addEventListener("click", function () {
-
-    console.log(hero);
-
-    movieCard.style.display = "none";
-    
-    results.style.display = "block";
-    movieCount.style.display = "block";
-    trailerContainer.style.display = "none";
-    trailerContainer.innerHTML = "";
-
-    document.body.style.backgroundImage = "";
-
-    moviePoster.removeAttribute("src");
-    moviePoster.style.display = "none";
-
-    window.scrollTo(0 ,0);
-
-    
+  movieCard.style.display = "none";
+  results.style.display = "block";
+  movieCount.style.display = "block";
+  trailerContainer.style.display = "none";
+  trailerContainer.innerHTML = "";
+  document.body.style.backgroundImage = "";
+  moviePoster.removeAttribute("src");
+  moviePoster.style.display = "none";
+  window.scrollTo(0, 0);
 });
 
 trailerBtn.addEventListener("click", function () {
+  const movieName = movieTitle.textContent;
 
-    const movieName = movieTitle.textContent;
+  if (movieName === "") return;
 
-    if (movieName === "") return;
-    trailerContainer.style.display = "block";
-
-    window.open (
-        `https://www.youtube.com/results?search_query=${movieName}+official+trailer`
-    );
+  window.open(
+    `https://www.youtube.com/results?search_query=${encodeURIComponent(movieName)}+official+trailer`
+  );
 });
 
 favoriteBtn.addEventListener("click", function () {
-    const movieName = movieTitle.textContent;
-    if( movieName === "") return;
-    if ( favorites.includes(movieName)) {
-        return;
-    }
-    favorites.push(movieName);
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-    console.log(favorites);
-    favoritesList.innerHTML = "";
-    favorites.forEach(function(movie) {
-        favoritesList.innerHTML += movie + "<br>";
-    });
+  const movieName = movieTitle.textContent;
+
+  if (movieName === "") return;
+
+  if (favorites.includes(movieName)) {
+    return;
+  }
+
+  favorites.push(movieName);
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+  renderFavorites();
 });
 
 function renderFavorites() {
-    favoritesList.innerHTML = "";
+  favoritesList.innerHTML = "";
 
-    favorites.forEach(function(movie, index) {
-        favoritesList.innerHTML += movie + ` <button onclick="removeFavorite(${index})">Delete</button><br>`;
-    });
+  favorites.forEach(function (movie, index) {
+    favoritesList.innerHTML += `${movie} <button onclick="removeFavorite(${index})">Delete</button><br>`;
+  });
 }
-
 
 window.removeFavorite = function (index) {
-    favorites.splice(index, 1);
-
-    localStorage.setItem("favorites", JSON.stringify(favorites))
-        
-        
-    
-
-    renderFavorites();
-}
+  favorites.splice(index, 1);
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+  renderFavorites();
+};
 
 renderFavorites();
-
-
-
-
-
-
-
-    
-
-   
-
-
