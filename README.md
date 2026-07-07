@@ -28,13 +28,13 @@ https://calmstudiodev.github.io/movie-explorer/?v=3
 ## Screenshots
 
 ### Home Screen
-![Home](screenshots/home.png)
+![Home](home.png)
 
 ### Search Results
-![Search Results](screenshots/search-results.png)
+![Search Results](search-results.png)
 
 ### Movie Details - The Godfather
-![The Godfather](screenshots/godfather.png)
+![The Godfather](godfather.png)
 
 ### Movie Details - The Dark Knight
-![The Dark Knight](screenshots/dark-knight.png)
+![The Dark Knight](dark-knight.png)
