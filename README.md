@@ -24,3 +24,17 @@ A modern Movie EXplorer built with HTML,CSS and JavaScript using the OMDB API.
 ##Live Demo
 Click here to try:
 https://calmstudiodev.github.io/movie-explorer/?v=3
+
+## Screenshots
+
+### Home Screen
+![Home](screenshots/home.png)
+
+### Search Results
+![Search Results](screenshots/search-results.png)
+
+### Movie Details - The Godfather
+![The Godfather](screenshots/godfather.png)
+
+### Movie Details - The Dark Knight
+![The Dark Knight](screenshots/dark-knight.png)
